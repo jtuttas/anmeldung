@@ -1,0 +1,12 @@
+# Beispiel docker-compose.yml für Anmeldung Pro MMBbS
+version: '3.8'
+services:
+  anmeldung:
+    build: .
+    container_name: anmeldung_prommbbs
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./config:/app/config:ro
+    environment:
+      - CONFIG_DIR=/app/config
