@@ -15,6 +15,7 @@ on:
       - '**/sendMail.js'
       - '**/onedriveExcel.js'
       - '**/get_onedrive_refresh_token.js'
+  workflow_dispatch:
 
 jobs:
   build-and-push:
