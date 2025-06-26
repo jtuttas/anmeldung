@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { sendAnmeldungMail } = require('./sendMail');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = 4000;
@@ -30,6 +31,21 @@ app.use(express.static(path.join(__dirname, 'build')));
 //   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 // });
 
-app.listen(PORT, () => {
-  console.log(`Backend läuft auf http://localhost:${PORT}`);
-});
+const configDir = process.env.CONFIG_DIR || path.join(__dirname, 'config');
+const keyPath = path.join(configDir, 'server.key');
+const certPath = path.join(configDir, 'server.cert');
+
+if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+  const https = require('https');
+  const options = {
+    key: fs.readFileSync(keyPath),
+    cert: fs.readFileSync(certPath)
+  };
+  https.createServer(options, app).listen(PORT, () => {
+    console.log(`Backend läuft über HTTPS auf https://localhost:${PORT}`);
+  });
+} else {
+  app.listen(PORT, () => {
+    console.log(`Backend läuft auf http://localhost:${PORT}`);
+  });
+}

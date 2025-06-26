@@ -24,3 +24,5 @@ yarn-error.log*
 
 config/secrets.json
 
+config/server.cert
+config/server.key

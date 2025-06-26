@@ -3,7 +3,6 @@ import './Anmeldeformular.css';
 
 const SignatureBox = React.forwardRef((props, ref) => {
   const canvasRef = useRef(null);
-  const drawing = useRef(false);
 
   React.useImperativeHandle(ref, () => ({
     clear: () => {
@@ -22,6 +21,11 @@ const SignatureBox = React.forwardRef((props, ref) => {
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
+    // Setze Canvas-Breite auf die tatsächliche Breite des Containers (responsive)
+    const parentWidth = canvas.parentElement.offsetWidth;
+    if (canvas.width !== parentWidth) {
+      canvas.width = parentWidth;
+    }
     const ctx = canvas.getContext('2d');
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
@@ -108,12 +112,14 @@ const SignatureBox = React.forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div style={{width: 350, height: 100, maxWidth: '100%'}}>
+    <div style={{width: '100%', maxWidth: '100%'}}>
       <canvas
         ref={canvasRef}
         width={350}
         height={100}
         style={{
+          width: '100%',
+          maxWidth: '100%',
           border: '1px solid #ccc',
           borderRadius: '4px',
           display: 'block',
