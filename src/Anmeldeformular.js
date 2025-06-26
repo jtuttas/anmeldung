@@ -66,10 +66,11 @@ function Anmeldeformular() {
   };
 
   const getApiUrl = () => {
-    // Wenn Frontend und Backend auf demselben Host laufen (z.B. Docker, Deployment)
-    if (window.location.origin.includes('localhost')) {
+    // Wenn Frontend auf localhost läuft, nutze explizit Port 4000
+    if (window.location.hostname === 'localhost') {
       return 'http://localhost:4000/api/anmeldung';
     }
+    // Sonst immer window.location.origin (inkl. Port, falls gesetzt)
     return window.location.origin + '/api/anmeldung';
   };
 
