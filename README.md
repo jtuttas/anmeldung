@@ -20,7 +20,9 @@ anmeldung/
   sendMail.js         # E-Mail- und PDF-Logik (Node.js)
   onedriveExcel.js    # OneDrive/Excel-Integration (Node.js)
   get_onedrive_refresh_token.js # Hilfsskript für OAuth2-Token
-  secrets.json        # Zugangsdaten für SMTP & OneDrive (nicht ins Repo!)
+  config/             # Konfigurationsordner für secrets.json und email_text.txt
+    secrets.json      # Zugangsdaten für SMTP & OneDrive (nicht ins Repo!)
+    email_text.txt    # E-Mail-Textvorlage
   package.json        # Abhängigkeiten
 ```
 
@@ -30,7 +32,7 @@ anmeldung/
    cd anmeldung
    npm install
    ```
-2. **SMTP- und OneDrive-Zugangsdaten in `secrets.json` eintragen**
+2. **SMTP- und OneDrive-Zugangsdaten in `config/secrets.json` eintragen**
    ```json
    {
      "smtp_host": "...",
@@ -80,6 +82,17 @@ anmeldung/
 - Für weitere Felder oder Layoutwünsche bitte die Dateien in `src/` anpassen.
 - PDF-Layout kann in `sendMail.js` (Funktion `createAnmeldungPDF`) angepasst werden.
 - Excel-Integration kann in `onedriveExcel.js` angepasst werden.
+
+## Docker & Container-Betrieb
+- Die Datei `config/secrets.json` und weitere Konfigurationsdateien werden per Volume in den Container gemountet (siehe `docker-compose.yml`).
+- Beispiel für docker-compose:
+  ```yml
+  volumes:
+    - ./config:/app/config:ro
+  environment:
+    - CONFIG_DIR=/app/config
+  ```
+- Im Dockerfile wird `/app/config` als Konfigurationsordner erwartet.
 
 ---
 © Förderverein „Pro MMBbS“ e. V. – Stand: Juni 2025

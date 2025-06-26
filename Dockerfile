@@ -5,13 +5,13 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Nur package.json und package-lock.json kopieren und Abhängigkeiten installieren
-COPY anmeldung/package*.json ./
+COPY package*.json ./
 RUN npm install
 
 # Quellcode kopieren (ohne config!)
-COPY anmeldung/. ./
+COPY . .
 
-# config-Ordner für secrets.json und email_text.txt (wird als Volume gemountet)
+# config-Ordner für secrets.json und email_text.txt (wird als Volume gemountet, z.B. mit docker-compose)
 RUN mkdir -p /app/config
 
 # Build Frontend

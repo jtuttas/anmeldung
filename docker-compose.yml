@@ -1,4 +1,5 @@
 # Beispiel docker-compose.yml für Anmeldung Pro MMBbS
+# Der Ordner ./config enthält secrets.json und weitere Konfigurationsdateien und wird als Volume in den Container gemountet.
 version: '3.8'
 services:
   anmeldung:
