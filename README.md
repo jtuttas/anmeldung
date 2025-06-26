@@ -3,6 +3,7 @@
 Dies ist eine vollständige Webanwendung zur digitalen Mitgliedsanmeldung für den Förderverein „Pro MMBbS“ e. V.
 
 ## Features
+
 - Ausfüllbares Anmeldeformular (responsive, mobilfreundlich)
 - Unterschriftenfeld (Canvas, Touch/Mouse)
 - Automatische PDF-Erzeugung mit allen Daten und Unterschrift
@@ -11,7 +12,8 @@ Dies ist eine vollständige Webanwendung zur digitalen Mitgliedsanmeldung für d
 - Fehler- und Erfolgsmeldungen im Frontend
 
 ## Projektstruktur
-```
+
+```text
 anmeldung/
   src/                # React-Quellcode (Frontend)
   public/             # Statische Dateien für React
@@ -27,12 +29,16 @@ anmeldung/
 ```
 
 ## Installation & Betrieb
+
 1. **Abhängigkeiten installieren**
-   ```
+
+   ```bash
    cd anmeldung
    npm install
    ```
+
 2. **SMTP- und OneDrive-Zugangsdaten in `config/secrets.json` eintragen**
+
    ```json
    {
      "smtp_host": "...",
@@ -47,24 +53,31 @@ anmeldung/
      "onedrive_user": "..."
    }
    ```
+
 3. **OneDrive/Graph API einrichten**
    - Registriere eine App im Azure-Portal (Azure Active Directory → App-Registrierungen).
    - Trage die Client-ID, Tenant-ID und das Client-Secret in `secrets.json` ein.
    - Vergib die Berechtigungen `Files.ReadWrite.All`, `offline_access`, `User.Read` für Microsoft Graph und erteile Admin-Zustimmung.
    - Führe das Skript aus, um den Refresh-Token zu generieren:
-     ```
+
+     ```bash
      node get_onedrive_refresh_token.js
      ```
+
    - Folge den Anweisungen im Terminal, um den Token zu erhalten und automatisch in `secrets.json` zu speichern.
 
 4. **Frontend bauen**
-   ```
+
+   ```bash
    npm run build
    ```
+
 5. **Backend starten**
-   ```
+
+   ```bash
    node server.js
    ```
+
 6. **Im Browser öffnen**
    [http://localhost:4000](http://localhost:4000)
 
@@ -81,19 +94,25 @@ anmeldung/
 - Die Zugangsdaten enthalten sensible Informationen für E-Mail- und OneDrive-Zugriff.
 
 ## Anpassungen
+
 - Für weitere Felder oder Layoutwünsche bitte die Dateien in `src/` anpassen.
 - PDF-Layout kann in `sendMail.js` (Funktion `createAnmeldungPDF`) angepasst werden.
 - Excel-Integration kann in `onedriveExcel.js` angepasst werden.
 
 ## Docker & Container-Betrieb
+
 - Die Datei `config/secrets.json` und weitere Konfigurationsdateien werden per Volume in den Container gemountet (siehe `docker-compose.yml`).
+- Setze die Umgebungsvariable `FRONTEND_ORIGIN` in der `docker-compose.yml`, damit das Backend nur Requests vom eigenen Frontend akzeptiert (z.B. `https://deine-frontend-domain.de`).
 - Beispiel für docker-compose:
+
   ```yml
   volumes:
     - ./config:/app/config:ro
   environment:
     - CONFIG_DIR=/app/config
+    - FRONTEND_ORIGIN=https://deine-frontend-domain.de
   ```
+
 - Im Dockerfile wird `/app/config` als Konfigurationsordner erwartet.
 
 ---

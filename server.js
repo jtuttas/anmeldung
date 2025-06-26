@@ -8,7 +8,19 @@ const fs = require('fs');
 const app = express();
 const PORT = 4000;
 
-app.use(cors());
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
+
+if (FRONTEND_ORIGIN) {
+  app.use(cors({
+    origin: FRONTEND_ORIGIN,
+    credentials: false
+  }));
+  console.log(`CORS aktiviert für Origin: ${FRONTEND_ORIGIN}`);
+} else {
+  app.use(cors());
+  console.log('CORS ist offen (keine Origin-Beschränkung, FRONTEND_ORIGIN nicht gesetzt)');
+}
+
 app.use(bodyParser.json({ limit: '10mb' }));
 
 app.post('/api/anmeldung', (req, res) => {

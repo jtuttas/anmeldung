@@ -11,3 +11,4 @@ services:
       - ./config:/app/config:ro
     environment:
       - CONFIG_DIR=/app/config
+      - FRONTEND_ORIGIN=https://deine-frontend-domain.de
