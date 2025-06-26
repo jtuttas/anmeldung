@@ -69,6 +69,7 @@ anmeldung/
    [http://localhost:4000](http://localhost:4000)
 
 ## Hinweise zu OneDrive/Excel
+
 - Jede Anmeldung wird als neuer Datensatz in der Datei `prommbbs_anmeldungen.xlsx` im OneDrive-Ordner `/Temp` gespeichert.
 - Die Datei wird automatisch angelegt, falls sie nicht existiert.
 - Die Unterschrift wird als PNG-Base64-String in einer Spalte gespeichert.
