@@ -76,6 +76,7 @@ anmeldung/
 - Für die OneDrive-Integration werden die Microsoft Graph API und OAuth2 verwendet.
 
 ## Sicherheit
+
 - `secrets.json` **niemals** ins öffentliche Repository hochladen!
 - Die Zugangsdaten enthalten sensible Informationen für E-Mail- und OneDrive-Zugriff.
 
