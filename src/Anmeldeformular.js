@@ -65,6 +65,14 @@ function Anmeldeformular() {
     signatureRef.current.clear();
   };
 
+  const getApiUrl = () => {
+    // Wenn Frontend und Backend auf demselben Host laufen (z.B. Docker, Deployment)
+    if (window.location.origin.includes('localhost')) {
+      return 'http://localhost:4000/api/anmeldung';
+    }
+    return window.location.origin + '/api/anmeldung';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -94,7 +102,7 @@ function Anmeldeformular() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:4000/api/anmeldung', {
+      const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ formData: form, signatureDataUrl: signature })
