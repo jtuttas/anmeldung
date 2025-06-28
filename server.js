@@ -10,7 +10,13 @@ const PORT = 4000;
 
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 
-if (FRONTEND_ORIGIN) {
+if (process.env.NODE_ENV !== 'production' && (!FRONTEND_ORIGIN)) {
+  app.use(cors({
+    origin: ["http://localhost:3000", "http://localhost:4000"],
+    credentials: false
+  }));
+  console.log('CORS für Entwicklung: localhost:3000 und localhost:4000 erlaubt');
+} else if (FRONTEND_ORIGIN) {
   app.use(cors({
     origin: FRONTEND_ORIGIN,
     credentials: false

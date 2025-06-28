@@ -47,6 +47,9 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     doc.text('Persönliche Angaben:', { underline: true });
     doc.text(`Mitgliedstyp: ${formData.mitgliedstyp || ''}`);
     doc.text(`Name: ${formData.name || ''}`);
+    if (formData.ansprechpartner) {
+      doc.text(`Ansprechpartner: ${formData.ansprechpartner}`);
+    }
     doc.text(`Straße: ${formData.strasse || ''}`);
     doc.text(`PLZ, Ort: ${formData.plzort || ''}`);
     doc.text(`Telefon: ${formData.telefon || ''}`);
@@ -119,14 +122,15 @@ function sendAnmeldungMail(formData, signatureDataUrl, callback) {
     if (cc) {
       mailOptions.cc = cc;
     }
-    if (signatureDataUrl) {
-      mailOptions.attachments.push({
-        filename: 'unterschrift.png',
-        content: signatureDataUrl.split(',')[1],
-        encoding: 'base64',
-        contentType: 'image/png'
-      });
-    }
+    // Unterschrift als Bild NICHT mehr anhängen
+    // if (signatureDataUrl) {
+    //   mailOptions.attachments.push({
+    //     filename: 'unterschrift.png',
+    //     content: signatureDataUrl.split(',')[1],
+    //     encoding: 'base64',
+    //     contentType: 'image/png'
+    //   });
+    // }
     console.log('MailOptions:', mailOptions);
     transporter.sendMail(mailOptions, (err, info) => {
       if (err) {

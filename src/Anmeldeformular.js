@@ -2,9 +2,28 @@ import React, { useState, useRef } from 'react';
 import './Anmeldeformular.css';
 import SignatureBox from './SignatureBox';
 
+// Hilfsfunktionen für IBAN/BIC-Validierung
+function validateIBAN(iban) {
+  if (!iban) return false;
+  const ibanNorm = iban.replace(/\s+/g, '').toUpperCase();
+  if (!/^([A-Z]{2}\d{2}[A-Z0-9]{1,30})$/.test(ibanNorm)) return false;
+  const rearranged = ibanNorm.slice(4) + ibanNorm.slice(0, 4);
+  const replaced = rearranged.replace(/[A-Z]/g, ch => (ch.charCodeAt(0) - 55).toString());
+  let remainder = replaced;
+  while (remainder.length > 9) {
+    remainder = (parseInt(remainder.slice(0, 9), 10) % 97).toString() + remainder.slice(9);
+  }
+  return parseInt(remainder, 10) % 97 === 1;
+}
+function validateBIC(bic) {
+  if (!bic) return false;
+  return /^[A-Za-z]{4}[A-Za-z]{2}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/.test(bic.trim());
+}
+
 const initialState = {
   mitgliedstyp: '',
   name: '',
+  ansprechpartner: '', // NEU
   strasse: '',
   plzort: '',
   telefon: '',
@@ -41,6 +60,8 @@ function Anmeldeformular() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [missingFields, setMissingFields] = useState([]);
+  const [ibanError, setIbanError] = useState('');
+  const [bicError, setBicError] = useState('');
   const signatureRef = useRef();
 
   const handleChange = (e) => {
@@ -66,16 +87,32 @@ function Anmeldeformular() {
   };
 
   const getApiUrl = () => {
-    // Wenn Frontend auf localhost läuft, nutze explizit Port 4000
+    // Wenn Frontend auf localhost läuft, nutze explizit das aktuelle Protokoll und Port 4000
     if (window.location.hostname === 'localhost') {
-      return 'http://localhost:4000/api/anmeldung';
+      return window.location.protocol + '//localhost:4000/api/anmeldung';
     }
-    // Sonst immer window.location.origin (inkl. Port, falls gesetzt)
+    // Sonst immer window.location.origin (inkl. Protokoll und Port, falls gesetzt)
     return window.location.origin + '/api/anmeldung';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // IBAN/BIC-Validierung vor dem Absenden
+    let ibanValid = validateIBAN(form.iban);
+    let bicValid = validateBIC(form.bic);
+    let hasError = false;
+    if (!ibanValid) {
+      setIbanError('Ungültige IBAN');
+      hasError = true;
+    }
+    if (!bicValid) {
+      setBicError('Ungültige BIC');
+      hasError = true;
+    }
+    if (hasError) {
+      setError('Bitte korrigieren Sie IBAN und/oder BIC.');
+      return;
+    }
     setLoading(true);
     setSubmitted(false);
     setError(null);
@@ -121,6 +158,28 @@ function Anmeldeformular() {
     }
   };
 
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    if (name === 'iban') {
+      if (value && !validateIBAN(value)) {
+        setIbanError('Ungültige IBAN');
+      } else {
+        setIbanError('');
+      }
+    }
+    if (name === 'bic') {
+      if (value && !validateBIC(value)) {
+        setBicError('Ungültige BIC');
+      } else {
+        setBicError('');
+      }
+    }
+    // Übernehme vollständigen Namen als Kontoinhaber beim Verlassen des Namensfelds
+    if (name === 'name' && (!form.kontoinhaber || form.kontoinhaber.trim() === '')) {
+      setForm(prev => ({ ...prev, kontoinhaber: value }));
+    }
+  };
+
   if (submitted) {
     return (
       <div className="danke-container">
@@ -148,9 +207,16 @@ function Anmeldeformular() {
           </div>
           <div>
             <label>Vor- und Nachname / Firmenname<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="name" value={form.name} onChange={handleChange} />
+              <input type="text" name="name" value={form.name} onChange={handleChange} onBlur={handleBlur} />
             </label>
           </div>
+          {form.mitgliedstyp === 'Firma' && (
+            <div>
+              <label>Ansprechpartner<br />
+                <input type="text" name="ansprechpartner" value={form.ansprechpartner} onChange={handleChange} />
+              </label>
+            </div>
+          )}
           <div>
             <label>Straße, Hausnummer<span style={{color:'#b71c1c'}}>*</span><br />
               <input type="text" name="strasse" value={form.strasse} onChange={handleChange} />
@@ -202,13 +268,15 @@ function Anmeldeformular() {
           </div>
           <div>
             <label>IBAN<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="iban" value={form.iban} onChange={handleChange} />
+              <input type="text" name="iban" value={form.iban} onChange={handleChange} onBlur={handleBlur} />
             </label>
+            {ibanError && <div className="error" style={{color:'red',marginTop:'-1rem',marginBottom:'1rem'}}>{ibanError}</div>}
           </div>
           <div>
             <label>BIC<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="bic" value={form.bic} onChange={handleChange} />
+              <input type="text" name="bic" value={form.bic} onChange={handleChange} onBlur={handleBlur} />
             </label>
+            {bicError && <div className="error" style={{color:'red',marginTop:'-1rem',marginBottom:'1rem'}}>{bicError}</div>}
           </div>
           <div>
             <label>Kreditinstitut<span style={{color:'#b71c1c'}}>*</span><br />
