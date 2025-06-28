@@ -308,7 +308,10 @@ function Anmeldeformular() {
         <fieldset>
           <legend>Datenschutz & Optionen</legend>
           <div className="datenschutz-group">
-            <label><input type="checkbox" name="datenschutz" checked={form.datenschutz} onChange={handleChange} /> Ich habe die Hinweise zur Datenverarbeitung gelesen und akzeptiere sie.<span style={{color:'#b71c1c'}}>*</span></label>
+            <label>
+              <input type="checkbox" name="datenschutz" checked={form.datenschutz} onChange={handleChange} />
+              Ich habe die <a href="/Datenverarbeitung.html" target="_blank" rel="noopener noreferrer">Hinweise zur Datenverarbeitung</a> gelesen und akzeptiere sie.<span style={{color:'#b71c1c'}}>*</span>
+            </label>
             <label><input type="checkbox" name="emailCopy" checked={form.emailCopy} onChange={handleChange} /> Ich möchte eine Kopie an meine E-Mail-Adresse erhalten.</label>
           </div>
         </fieldset>
