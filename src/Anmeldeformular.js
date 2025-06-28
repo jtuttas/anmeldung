@@ -158,6 +158,23 @@ function Anmeldeformular() {
     }
   };
 
+  // IBAN-API-Abfrage
+  async function fetchBankDataForIban(iban) {
+    try {
+      const response = await fetch(`https://openiban.com/validate/${encodeURIComponent(iban)}?getBIC=true&validateBankCode=true`);
+      const data = await response.json();
+      if (data.valid && data.bankData) {
+        setForm(prev => ({
+          ...prev,
+          bic: data.bankData.bic || prev.bic,
+          kreditinstitut: data.bankData.name || prev.kreditinstitut
+        }));
+      }
+    } catch (err) {
+      // Fehler ignorieren, falls Service nicht erreichbar
+    }
+  }
+
   const handleBlur = (e) => {
     const { name, value } = e.target;
     if (name === 'iban') {
@@ -165,6 +182,9 @@ function Anmeldeformular() {
         setIbanError('Ungültige IBAN');
       } else {
         setIbanError('');
+        if (value && validateIBAN(value)) {
+          fetchBankDataForIban(value);
+        }
       }
     }
     if (name === 'bic') {
