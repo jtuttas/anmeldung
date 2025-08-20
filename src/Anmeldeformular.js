@@ -1,6 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import './Anmeldeformular.css';
-import SignatureBox from './SignatureBox';
 
 // Hilfsfunktionen für IBAN/BIC-Validierung
 function validateIBAN(iban) {
@@ -38,10 +37,9 @@ const initialState = {
   ort: '',
   datum: new Date().toISOString().slice(0, 10), // aktuelles Datum als Default
   datenschutz: false,
-  emailCopy: false
+  // ...existing code...
 };
 
-const MemoSignatureBox = React.memo(SignatureBox);
 
 function Modal({ show, children }) {
   if (!show) return null;
@@ -62,7 +60,7 @@ function Anmeldeformular() {
   const [missingFields, setMissingFields] = useState([]);
   const [ibanError, setIbanError] = useState('');
   const [bicError, setBicError] = useState('');
-  const signatureRef = useRef();
+  // ...existing code...
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -75,16 +73,13 @@ function Anmeldeformular() {
       if (name === 'mitgliedstyp') {
         if (value === 'Schüler/in') newState.beitrag = '10';
         else if (value === 'Lehrkraft') newState.beitrag = '25';
-        else if (value === 'Firma') newState.beitrag = '100';
+  else if (value === 'Unternehmen') newState.beitrag = '100';
         else newState.beitrag = '';
       }
       return newState;
     });
   };
 
-  const handleSignatureClear = () => {
-    signatureRef.current.clear();
-  };
 
   const getApiUrl = () => {
     // Wenn Frontend auf localhost läuft, nutze explizit das aktuelle Protokoll und Port 4000
@@ -106,7 +101,6 @@ function Anmeldeformular() {
       hasError = true;
     }
     if (!bicValid) {
-      setBicError('Ungültige BIC');
       hasError = true;
     }
     if (hasError) {
@@ -117,7 +111,7 @@ function Anmeldeformular() {
     setSubmitted(false);
     setError(null);
     setMissingFields([]);
-    const signature = signatureRef.current.isEmpty() ? null : signatureRef.current.getDataURL();
+  // ...existing code...
     // Pflichtfeldprüfung
     const required = [
       { key: 'mitgliedstyp', label: 'Mitgliedstyp' },
@@ -132,7 +126,7 @@ function Anmeldeformular() {
       { key: 'datenschutz', label: 'Datenschutz' }
     ];
     let missing = required.filter(f => !form[f.key] || (typeof form[f.key] === 'boolean' && !form[f.key])).map(f => f.label);
-    if (!signature) missing.push('Unterschrift');
+  // ...existing code...
     if (missing.length > 0) {
       setLoading(false);
       setMissingFields(missing);
@@ -143,7 +137,7 @@ function Anmeldeformular() {
       const response = await fetch(getApiUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData: form, signatureDataUrl: signature })
+  body: JSON.stringify({ formData: form })
       });
       const result = await response.json();
       if (result.success) {
@@ -222,7 +216,7 @@ function Anmeldeformular() {
             <label>Mitgliedstyp:</label>
             <label><input type="radio" name="mitgliedstyp" value="Schüler/in" checked={form.mitgliedstyp === 'Schüler/in'} onChange={handleChange} /> Schülerin/Schüler</label>
             <label><input type="radio" name="mitgliedstyp" value="Lehrkraft" checked={form.mitgliedstyp === 'Lehrkraft'} onChange={handleChange} /> Lehrkraft der MMBbS</label>
-            <label><input type="radio" name="mitgliedstyp" value="Firma" checked={form.mitgliedstyp === 'Firma'} onChange={handleChange} /> Firma/Institution</label>
+            <label><input type="radio" name="mitgliedstyp" value="Unternehmen" checked={form.mitgliedstyp === 'Unternehmen'} onChange={handleChange} /> Unternehmen/Institution</label>
             <label><input type="radio" name="mitgliedstyp" value="Sonstiges" checked={form.mitgliedstyp === 'Sonstiges'} onChange={handleChange} /> Sonstiges Mitglied</label>
           </div>
           <div>
@@ -230,7 +224,7 @@ function Anmeldeformular() {
               <input type="text" name="name" value={form.name} onChange={handleChange} onBlur={handleBlur} />
             </label>
           </div>
-          {form.mitgliedstyp === 'Firma' && (
+          {form.mitgliedstyp === 'Unternehmen' && (
             <div>
               <label>Ansprechpartner<br />
                 <input type="text" name="ansprechpartner" value={form.ansprechpartner} onChange={handleChange} />
@@ -269,7 +263,7 @@ function Anmeldeformular() {
           <div className="radio-group">
             <label><input type="radio" name="beitrag" value="10" checked={form.beitrag === '10'} onChange={handleChange} /> 10 EUR (Schüler)</label>
             <label><input type="radio" name="beitrag" value="25" checked={form.beitrag === '25'} onChange={handleChange} /> 25 EUR (Lehrkraft)</label>
-            <label><input type="radio" name="beitrag" value="100" checked={form.beitrag === '100'} onChange={handleChange} /> 100 EUR (Firma/Institution)</label>
+            <label><input type="radio" name="beitrag" value="100" checked={form.beitrag === '100'} onChange={handleChange} /> 100 EUR (Unternehmen/Institution)</label>
             <label><input type="radio" name="beitrag" value="frei" checked={form.beitrag === 'frei'} onChange={handleChange} /> Freiwilliger Beitrag:</label>
             <input type="number" name="beitragFrei" min="1" step="1" placeholder="Betrag in EUR" value={form.beitragFrei} onChange={handleChange} />
           </div>
@@ -310,29 +304,16 @@ function Anmeldeformular() {
               <input type="date" name="datum" value={form.datum} readOnly tabIndex={-1} style={{ background: '#f5f5f5', color: '#888', cursor: 'not-allowed' }} />
             </div>
           </div>
-          <div className="signature-container">
-            <label>Unterschrift (bei Minderjährigen inkl. Erziehungsberechtigte)<span style={{color:'#b71c1c'}}>*</span></label>
-            <MemoSignatureBox ref={signatureRef} />
-            <button
-              type="button"
-              onClick={handleSignatureClear}
-              style={{ marginTop: '0.5rem', userSelect: 'none' }}
-              tabIndex={-1}
-              onMouseDown={e => e.preventDefault()}
-            >
-              Unterschrift löschen
-            </button>
-          </div>
+          {/* Unterschriftenfeld entfernt */}
         </fieldset>
         {/* Datenschutz und Optionen */}
         <fieldset>
           <legend>Datenschutz & Optionen</legend>
           <div className="datenschutz-group">
-            <label>
-              <input type="checkbox" name="datenschutz" checked={form.datenschutz} onChange={handleChange} />
-              Ich habe die <a href="/Datenverarbeitung.html" target="_blank" rel="noopener noreferrer">Hinweise zur Datenverarbeitung</a> gelesen und akzeptiere sie.<span style={{color:'#b71c1c'}}>*</span>
-            </label>
-            <label><input type="checkbox" name="emailCopy" checked={form.emailCopy} onChange={handleChange} /> Ich möchte eine Kopie an meine E-Mail-Adresse erhalten.</label>
+             <label>
+               <input type="checkbox" name="datenschutz" checked={form.datenschutz} onChange={handleChange} />
+               Ich habe die <a href="/Datenverarbeitung.html" target="_blank" rel="noopener noreferrer">Hinweise zur Datenverarbeitung</a> gelesen und akzeptiere sie.<span style={{color:'#b71c1c'}}>*</span>
+             </label>
           </div>
         </fieldset>
         <button type="submit" disabled={loading}>Absenden</button>

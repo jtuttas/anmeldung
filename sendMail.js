@@ -39,10 +39,32 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
       const pdfData = Buffer.concat(buffers);
       resolve(pdfData);
     });
-    // Titel
-    doc.fontSize(18).text('Mitgliedsanmeldung Förderverein „Pro MMBbS“ e. V.', { align: 'center' });
+    // Logo oben rechts einfügen
+    try {
+      const logoPath = path.join(__dirname, 'src/log.png');
+      if (fs.existsSync(logoPath)) {
+        doc.image(logoPath, doc.page.width - 170, 40, {width: 120});
+      }
+    } catch (e) {}
+
+  // Anschrift DIN-konform (Fensterumschlag)
+  // Empfängeradresse DIN-konform (Fensterumschlag)
+  doc.fontSize(12);
+  doc.text('Pro MMBBS e.V.\nExpo Plaza 3\n30539 Hannover', 80, 130, {
+    width: 200,
+    align: 'left'
+  });
+
+    // Abstand zum Brieftext
+    doc.moveDown(4);
+
+    // Titel und Einleitung
+    doc.fontSize(16).text('Mitgliedsanmeldung Förderverein „Pro MMBbS“ e. V.', { align: 'left' });
     doc.moveDown();
     doc.fontSize(12);
+    doc.text('Hiermit melde ich mich verbindlich als Mitglied im Förderverein „Pro MMBbS“ e. V. an.');
+    doc.moveDown();
+
     // Persönliche Angaben
     doc.text('Persönliche Angaben:', { underline: true });
     doc.text(`Mitgliedstyp: ${formData.mitgliedstyp || ''}`);
@@ -56,6 +78,7 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     doc.text(`E-Mail: ${formData.email || ''}`);
     doc.text(`Geburtsdatum: ${formData.geburtsdatum || ''}`);
     doc.moveDown();
+
     // Mitgliedsbeitrag
     doc.text('Mitgliedsbeitrag:', { underline: true });
     doc.text(`Beitrag: ${formData.beitrag || ''}`);
@@ -63,8 +86,10 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
       doc.text(`Freiwilliger Beitrag: ${formData.beitragFrei || ''} EUR`);
     }
     doc.moveDown();
+
     // SEPA-Lastschriftmandat
     doc.text('SEPA-Lastschriftmandat:', { underline: true });
+    doc.text('Gläubiger-Identifikationsnummer: DE33ZZZ00002835849');
     doc.text(`Kontoinhaber: ${formData.kontoinhaber || ''}`);
     doc.text(`IBAN: ${formData.iban || ''}`);
     doc.text(`BIC: ${formData.bic || ''}`);
@@ -72,18 +97,16 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     doc.text(`Ort: ${formData.ort || ''}`);
     doc.text(`Datum: ${formData.datum || ''}`);
     doc.moveDown();
-    doc.text('Unterschrift:', { underline: true });
-    // Unterschrift als Bild einfügen
-    if (signatureDataUrl) {
-      const img = signatureDataUrl.split(',')[1];
-      const imgBuffer = Buffer.from(img, 'base64');
-      doc.image(imgBuffer, { width: 200, height: 60 });
-    } else {
-      doc.text('(keine Unterschrift)');
-    }
-    doc.moveDown();
+
+    // Datenschutz
     doc.text('Datenschutz akzeptiert: ' + (formData.datenschutz ? 'Ja' : 'Nein'));
-    doc.text('Kopie an E-Mail: ' + (formData.emailCopy ? 'Ja' : 'Nein'));
+    doc.moveDown(3);
+
+    // Unterschriftsbereich für SEPA
+    doc.text('______________________________', 80, doc.y);
+    doc.text('Unterschrift für SEPA-Lastschriftmandat', 60, doc.y);
+    doc.moveDown(2);
+
     doc.end();
   });
 }
@@ -98,12 +121,10 @@ function sendAnmeldungMail(formData, signatureDataUrl, callback) {
   }
   const emailTextPath = path.join(configDir, 'email_text.txt');
   const emailText = fs.readFileSync(emailTextPath, 'utf8');
-  // Zieladresse immer aus secrets.json
-  const empfaenger = secrets.from;
-  // CC, falls gewünscht
-  let cc = undefined;
-  if (formData.emailCopy && formData.email) {
-    cc = formData.email;
+  // Zieladresse: Verein und Formularadresse
+  const empfaenger = [secrets.from];
+  if (formData.email) {
+    empfaenger.push(formData.email);
   }
   createAnmeldungPDF(formData, signatureDataUrl).then((pdfBuffer) => {
     const mailOptions = {
@@ -119,9 +140,6 @@ function sendAnmeldungMail(formData, signatureDataUrl, callback) {
         }
       ]
     };
-    if (cc) {
-      mailOptions.cc = cc;
-    }
     // Unterschrift als Bild NICHT mehr anhängen
     // if (signatureDataUrl) {
     //   mailOptions.attachments.push({
