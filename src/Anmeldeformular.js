@@ -197,7 +197,10 @@ function Anmeldeformular() {
   if (submitted) {
     return (
       <div className="danke-container">
-        <h1>Vielen Dank für Ihre Anmeldung zu pro MMBBS e.V.</h1>
+        <h1>
+          Vielen Dank für Ihre Anmeldung zu Pro MMBbS - Förderverein der Multi
+          Media Berufsbildenden Schulen Hannover e. V.
+        </h1>
       </div>
     );
   }
