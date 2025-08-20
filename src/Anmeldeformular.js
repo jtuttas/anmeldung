@@ -220,7 +220,7 @@ function Anmeldeformular() {
             <label><input type="radio" name="mitgliedstyp" value="Sonstiges" checked={form.mitgliedstyp === 'Sonstiges'} onChange={handleChange} /> Sonstiges Mitglied</label>
           </div>
           <div>
-            <label>Vor- und Nachname / Firmenname<span style={{color:'#b71c1c'}}>*</span><br />
+            <label>Vor- und Nachname / Unternehmen<span style={{color:'#b71c1c'}}>*</span><br />
               <input type="text" name="name" value={form.name} onChange={handleChange} onBlur={handleBlur} />
             </label>
           </div>
