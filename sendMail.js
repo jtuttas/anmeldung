@@ -65,7 +65,12 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     doc.moveDown(4);
 
     // Titel und Einleitung
-    doc.fontSize(16).text('Mitgliedsanmeldung Förderverein „Pro MMBbS“ e. V.', { align: 'left' });
+    doc
+      .fontSize(16)
+      .text(
+        "Mitgliedsanmeldung Förderverein Pro MMBbS - Förderverein der Multi Media Berufsbildenden Schulen Hannover e. V."
+      );
+    doc.moveDown();
     doc.moveDown();
     doc.fontSize(12);
     doc.text('Hiermit melde ich mich verbindlich als Mitglied im Förderverein „Pro MMBbS“ e. V. an.');
@@ -104,6 +109,7 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     doc.text(`${formData.ort || ""} den ${formData.datum || ""}`);
     doc.moveDown();
     doc.moveDown();
+    doc.moveDown();
 
 
     // Unterschriftsbereich für SEPA
@@ -138,7 +144,7 @@ function sendAnmeldungMail(formData, signatureDataUrl, callback) {
       text: emailText,
       attachments: [
         {
-          filename: 'anmeldung.pdf',
+          filename: 'Anmeldung.pdf',
           content: pdfBuffer,
           contentType: 'application/pdf'
         }
