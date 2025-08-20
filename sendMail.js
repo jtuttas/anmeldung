@@ -47,10 +47,16 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
       }
     } catch (e) {}
 
-  // Anschrift DIN-konform (Fensterumschlag)
+  // Absenderzeile oberhalb des Adressfelds (Schriftgröße 8)
+  doc.fontSize(8);
+  doc.text(`${formData.name || ''}, ${formData.strasse || ''}, ${formData.plzort || ''}`, 80, 120, {
+    width: 200,
+    align: 'left'
+  });
+
   // Empfängeradresse DIN-konform (Fensterumschlag)
   doc.fontSize(12);
-  doc.text('Pro MMBBS e.V.\nExpo Plaza 3\n30539 Hannover', 80, 130, {
+  doc.text('Pro MMBBS e.V.\nExpo Plaza 3\n30539 Hannover', 80, 145, {
     width: 200,
     align: 'left'
   });
@@ -81,7 +87,7 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
 
     // Mitgliedsbeitrag
     doc.text('Mitgliedsbeitrag:', { underline: true });
-    doc.text(`Beitrag: ${formData.beitrag || ''}`);
+    doc.text(`Beitrag: ${formData.beitrag || ''} EUR`);
     if (formData.beitrag === 'frei') {
       doc.text(`Freiwilliger Beitrag: ${formData.beitragFrei || ''} EUR`);
     }
@@ -94,17 +100,15 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     doc.text(`IBAN: ${formData.iban || ''}`);
     doc.text(`BIC: ${formData.bic || ''}`);
     doc.text(`Kreditinstitut: ${formData.kreditinstitut || ''}`);
-    doc.text(`Ort: ${formData.ort || ''}`);
-    doc.text(`Datum: ${formData.datum || ''}`);
+    doc.moveDown();
+    doc.text(`${formData.ort || ""} den ${formData.datum || ""}`);
+    doc.moveDown();
     doc.moveDown();
 
-    // Datenschutz
-    doc.text('Datenschutz akzeptiert: ' + (formData.datenschutz ? 'Ja' : 'Nein'));
-    doc.moveDown(3);
 
     // Unterschriftsbereich für SEPA
     doc.text('______________________________', 80, doc.y);
-    doc.text('Unterschrift für SEPA-Lastschriftmandat', 60, doc.y);
+    doc.text('Unterschrift für SEPA-Lastschriftmandat', 80, doc.y);
     doc.moveDown(2);
 
     doc.end();
