@@ -60,10 +60,18 @@ function Anmeldeformular() {
   const [missingFields, setMissingFields] = useState([]);
   const [ibanError, setIbanError] = useState('');
   const [bicError, setBicError] = useState('');
+  const [freiwilligAktiv, setFreiwilligAktiv] = useState(false);
   // ...existing code...
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === 'freiwilligAktiv') {
+      setFreiwilligAktiv(checked);
+      if (!checked) {
+        setForm((prev) => ({ ...prev, beitragFrei: '' }));
+      }
+      return;
+    }
     setForm((prev) => {
       let newState = {
         ...prev,
@@ -73,11 +81,34 @@ function Anmeldeformular() {
       if (name === 'mitgliedstyp') {
         if (value === 'Schüler/in') newState.beitrag = '10';
         else if (value === 'Lehrkraft') newState.beitrag = '25';
-  else if (value === 'Unternehmen') newState.beitrag = '100';
+        else if (value === 'Unternehmen') newState.beitrag = '100';
         else newState.beitrag = '';
+        // Wenn Typ geändert, freiwilligen Beitrag zurücksetzen
+        newState.beitragFrei = '';
+        setFreiwilligAktiv(false);
+      }
+      // Validierung: Freiwilliger Beitrag muss größer als Standardbeitrag sein
+      if (name === 'beitragFrei' && freiwilligAktiv) {
+        if (parseFloat(value) <= parseFloat(prev.beitrag)) {
+          setError('Der freiwillige Beitrag muss größer als der reguläre Beitrag sein.');
+        } else {
+          setError(null);
+        }
       }
       return newState;
     });
+  };
+
+  // Validierung auch bei TAB (onBlur) auf beitragFrei
+  const handleBeitragFreiBlur = (e) => {
+    const value = e.target.value;
+    if (freiwilligAktiv) {
+      if (parseFloat(value) <= parseFloat(form.beitrag)) {
+        setError('Der freiwillige Beitrag muss größer als der reguläre Beitrag sein.');
+      } else {
+        setError(null);
+      }
+    }
   };
 
 
@@ -263,12 +294,20 @@ function Anmeldeformular() {
         {/* Mitgliedsbeitrag */}
         <fieldset>
           <legend>Mitgliedsbeitrag</legend>
-          <div className="radio-group">
-            <label><input type="radio" name="beitrag" value="10" checked={form.beitrag === '10'} onChange={handleChange} /> 10 EUR (Schüler)</label>
-            <label><input type="radio" name="beitrag" value="25" checked={form.beitrag === '25'} onChange={handleChange} /> 25 EUR (Lehrkraft)</label>
-            <label><input type="radio" name="beitrag" value="100" checked={form.beitrag === '100'} onChange={handleChange} /> 100 EUR (Unternehmen/Institution)</label>
-            <label><input type="radio" name="beitrag" value="frei" checked={form.beitrag === 'frei'} onChange={handleChange} /> Freiwilliger Beitrag:</label>
-            <input type="number" name="beitragFrei" min="1" step="1" placeholder="Betrag in EUR" value={form.beitragFrei} onChange={handleChange} />
+          <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.5rem',maxWidth:'350px'}}>
+            <label style={{width:'100%'}}>Regulärer Beitrag:<br />
+              <input type="text" name="beitrag" value={form.beitrag + ' €'} disabled style={{background:'#f5f5f5',color:'#888',width:'100%'}} />
+            </label>
+            <label style={{width:'100%',marginTop:'0.5rem'}}>
+              <input type="checkbox" name="freiwilligAktiv" checked={freiwilligAktiv} onChange={handleChange} style={{marginRight:'0.5em'}} />
+              Ich möchte freiwillig einen höheren Beitrag zahlen
+            </label>
+            <label style={{width:'100%',marginTop:'0.5rem'}}>Freiwilliger Beitrag (EUR):<br />
+              <input type="number" name="beitragFrei" min={parseFloat(form.beitrag)+1||1} step="1" placeholder="Betrag in EUR" value={form.beitragFrei} onChange={handleChange} onBlur={handleBeitragFreiBlur} disabled={!freiwilligAktiv} style={{background:freiwilligAktiv?'#fff':'#f5f5f5',color:freiwilligAktiv?'#000':'#888',width:'100%'}} />
+              {error && freiwilligAktiv && form.beitragFrei !== '' && (
+                <div className="error" style={{color:'red',marginTop:'0.3em'}}>{error}</div>
+              )}
+            </label>
           </div>
         </fieldset>
         {/* SEPA-Lastschriftmandat */}

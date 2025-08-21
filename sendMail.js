@@ -40,29 +40,43 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
       resolve(pdfData);
     });
     // Logo oben rechts einfügen
+    let logoY = 40;
     try {
       const logoPath = path.join(__dirname, 'src/log.png');
       if (fs.existsSync(logoPath)) {
-        doc.image(logoPath, doc.page.width - 170, 40, {width: 120});
+        doc.image(logoPath, doc.page.width - 170, logoY, {width: 120});
       }
     } catch (e) {}
 
+    // Text auf Höhe des Logos, linksbündig, Schriftgröße 10
+    doc.fontSize(10);
+    doc.text(
+      'Pro MMBbS -Förderverein der Multi Media Berufsbildenden \nSchulen der Region Hannover e.V.\nPro MMBBS, Expo Plaza 3, 30539 Hannover, pro@mmbbs.de',
+      80,
+      logoY,
+      {
+        width: doc.page.width - 200,
+        align: 'left'
+      }
+    );
+
   // Absenderzeile oberhalb des Adressfelds (Schriftgröße 8)
   doc.fontSize(8);
-  doc.text(`${formData.name || ''}, ${formData.strasse || ''}, ${formData.plzort || ''}`, 80, 120, {
+  doc.text(`${formData.name || ''}, ${formData.strasse || ''}, ${formData.plzort || ''}`, 80, 135, {
     width: 200,
     align: 'left'
   });
 
   // Empfängeradresse DIN-konform (Fensterumschlag)
   doc.fontSize(12);
-  doc.text('Pro MMBBS e.V.\nExpo Plaza 3\n30539 Hannover', 80, 145, {
+  doc.text('Pro MMBBS e.V.\nExpo Plaza 3\n30539 Hannover', 80, 160, {
     width: 200,
     align: 'left'
   });
 
     // Abstand zum Brieftext
-    doc.moveDown(4);
+    doc.moveDown(5);
+    
 
     // Titel und Einleitung
     doc
@@ -71,7 +85,7 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
         "Mitgliedsanmeldung Förderverein Pro MMBbS - Förderverein der Multi Media Berufsbildenden Schulen Hannover e. V."
       );
     doc.moveDown();
-    doc.moveDown();
+    
     doc.fontSize(12);
     doc.text('Hiermit melde ich mich verbindlich als Mitglied im Förderverein „Pro MMBbS“ e. V. an.');
     doc.moveDown();
@@ -92,9 +106,12 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
 
     // Mitgliedsbeitrag
     doc.text('Mitgliedsbeitrag:', { underline: true });
-    doc.text(`Beitrag: ${formData.beitrag || ''} EUR`);
-    if (formData.beitrag === 'frei') {
-      doc.text(`Freiwilliger Beitrag: ${formData.beitragFrei || ''} EUR`);
+    // Prüfe, ob ein freiwilliger Beitrag gesetzt ist und gültig ist
+    const beitragFreiNum = Number(formData.beitragFrei);
+    if (beitragFreiNum && beitragFreiNum > Number(formData.beitrag)) {
+      doc.text(`Beitrag: ${beitragFreiNum} EUR (freiwillig)`);
+    } else {
+      doc.text(`Beitrag: ${formData.beitrag || ''} EUR`);
     }
     doc.moveDown();
 
@@ -117,6 +134,18 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     doc.text('Unterschrift für SEPA-Lastschriftmandat', 80, doc.y);
     doc.moveDown(2);
 
+    // Fußzeile (zweizeilig, weiter oben)
+    doc.fontSize(8);
+    const footerY1 = doc.page.height - 80;
+    const footerY2 = doc.page.height - 65;
+    doc.text('Hannoversche Volksbank IBAN: DE51 2519 0001 0445 1406 00  BIC: VOHADE2H Vereinsregister-Nr.: 204184', 50, footerY1, {
+      width: doc.page.width - 100,
+      align: 'center'
+    });
+    doc.text('Vorstand: Rainer Horn, Ingmar Vater, Silvan Ziemdorff', 50, footerY2, {
+      width: doc.page.width - 100,
+      align: 'center'
+    });
     doc.end();
   });
 }
