@@ -48,40 +48,58 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
       }
     } catch (e) {}
 
-    // SEPA-Lastschriftformular
-    doc.fontSize(14).text('SEPA-Lastschriftmandat', 50, 50);
+    // Briefkopf: Absender (klein) und Adressat (groß)
+    // Absender (Schriftgröße 10)
+    doc.fontSize(10).text(
+      `${formData.name || ''}, ${formData.strasse || ''}, ${formData.plzort || ''}`,
+      50,
+      logoY + 110,
+      { width: 300 }
+    );
+    // Adressat (Schriftgröße 12)
+    doc.fontSize(12).text('Pro MMBBS e.V.', 50, logoY + 130);
+    doc.text('Expo Plaza 3', 50, doc.y);
+    doc.text('30539 Hannover', 50, doc.y);
 
-    // Block: Zahlungsempfänger (Gläubiger)
-    doc.fontSize(10);
-    const block1X = 50, block1Y = 80, block1W = doc.page.width - 100, block1H = 90;
+    // SEPA-Lastschriftformular
+    doc.moveDown(5);
+    const sepaTitleY = doc.y;
+    doc.fontSize(14).text('SEPA-Lastschriftmandat', 50, sepaTitleY);
+
+    // Boxen direkt unter der Überschrift platzieren
+    const boxStartY = doc.y + 10;
+    const block1X = 50, block1Y = boxStartY, block1W = doc.page.width - 100, block1H = 90;
+    doc.fontSize(8);
     doc.rect(block1X, block1Y, block1W, block1H).stroke();
     let mandatsDatum = formData.datum ? formData.datum.replace(/-/g, '') : '';
-    // Quersumme IBAN
     let ibanSum = 0;
     if (formData.iban) {
       for (const c of formData.iban.replace(/\D/g, '')) ibanSum += parseInt(c);
     }
     let mandatsRef = `${mandatsDatum}${ibanSum}`;
-  doc.font('Helvetica-Bold').fontSize(10).text('Zahlungsempfänger (Gläubiger):', block1X + 10, block1Y + 10);
-  doc.font('Helvetica').fontSize(10).text('Förderverein der Multi Media Berufsbildenden Schulen der Region Hannover e.V.', block1X + 10, block1Y + 28);
-  doc.text('Pro MMBbS', block1X + 10, block1Y + 43);
-  doc.text('Expo Plaza 3', block1X + 10, block1Y + 58);
-  doc.text('30539 Hannover', block1X + 10, block1Y + 73);
-  doc.text('Gläubiger-Identifikationsnummer: DE33ZZZ00002835849', block1X + block1W/2 - 50, block1Y + 58);
-  doc.text(`Mandatsreferenz: ${mandatsRef}`, block1X + block1W/2 - 50, block1Y + 73);
+    doc.font('Helvetica-Bold').fontSize(10).text('Zahlungsempfänger (Gläubiger):', block1X + 10, block1Y + 10);
+    doc.font('Helvetica').fontSize(10).text('Förderverein der Multi Media Berufsbildenden Schulen der Region Hannover e.V.', block1X + 10, block1Y + 28);
+    doc.text('Pro MMBbS', block1X + 10, block1Y + 43);
+    doc.text('Expo Plaza 3', block1X + 10, block1Y + 58);
+    doc.text('30539 Hannover', block1X + 10, block1Y + 73);
+    doc.text('Gläubiger-Identifikationsnummer: DE33ZZZ00002835849', block1X + block1W/2 - 50, block1Y + 58);
+    doc.text(`Mandatsreferenz: ${mandatsRef}`, block1X + block1W/2 - 50, block1Y + 73);
 
     // Block: Zahlungspflichtiger (Kontoinhaber)
     const block2Y = block1Y + block1H + 20, block2H = 100;
-  doc.rect(block1X, block2Y, block1W, block2H).stroke();
-  doc.font('Helvetica-Bold').fontSize(10).text('Zahlungspflichtiger (Kontoinhaber):', block1X + 10, block2Y + 10);
-  doc.font('Helvetica').fontSize(10).text(`${formData.kontoinhaber || formData.name || ''}`, block1X + 10, block2Y + 28);
-  doc.text(`${formData.strasse || ''}`, block1X + 10, block2Y + 43);
-  doc.text(`${formData.plzort || ''}`, block1X + 10, block2Y + 58);
-  doc.text(`IBAN: ${formData.iban || ''}`, block1X + 10, block2Y + 73);
-  doc.text(`BIC: ${formData.bic || ''}`, block1X + 10, block2Y + 88);
+    doc.rect(block1X, block2Y, block1W, block2H).stroke();
+    doc.font('Helvetica-Bold').fontSize(10).text('Zahlungspflichtiger (Kontoinhaber):', block1X + 10, block2Y + 10);
+    doc.font('Helvetica').fontSize(10).text(`${formData.kontoinhaber || formData.name || ''}`, block1X + 10, block2Y + 28);
+    doc.text(`${formData.strasse || ''}`, block1X + 10, block2Y + 43);
+    doc.text(`${formData.plzort || ''}`, block1X + 10, block2Y + 58);
+    doc.text(`IBAN: ${formData.iban || ''}`, block1X + 10, block2Y + 73);
+    doc.text(`BIC: ${formData.bic || ''}`, block1X + 10, block2Y + 88);
 
     // SEPA-Text inkl. jährlichem Betrag
-    let sepaY = block2Y + block2H + 20;
+  // SEPA-Text inkl. jährlichem Betrag
+  let sepaY = block2Y + block2H + 20;
+
+    // SEPA-Text inkl. jährlichem Betrag
     // Beitrag berechnen
     let beitrag = Number(formData.beitrag) || 0;
     let beitragFrei = Number(formData.beitragFrei) || 0;
