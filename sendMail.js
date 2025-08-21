@@ -80,17 +80,21 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
   doc.text(`IBAN: ${formData.iban || ''}`, block1X + 10, block2Y + 73);
   doc.text(`BIC: ${formData.bic || ''}`, block1X + 10, block2Y + 88);
 
-    // SEPA-Text
+    // SEPA-Text inkl. jährlichem Betrag
     let sepaY = block2Y + block2H + 20;
-    doc
-      .fontSize(10)
-      .text(
-        "Ich ermächtige den Förderverein Pro MMBbS e.V., Zahlungen von meinem Konto mittels SEPA-Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die von Pro MMBbS auf mein Konto gezogenen SEPA-Lastschriften einzulösen.",
-        block1X,
-        sepaY,
-        { width: block1W }
-      );
-    
+    // Beitrag berechnen
+    let beitrag = Number(formData.beitrag) || 0;
+    let beitragFrei = Number(formData.beitragFrei) || 0;
+    let zuZahlen = beitragFrei > beitrag ? beitragFrei : beitrag;
+    let beitragText = `Der jährliche zu zahlende Betrag beträgt ${zuZahlen} EUR.`;
+    doc.fontSize(10).text(beitragText, block1X, sepaY, {width: block1W});
+    doc.moveDown(0.5);
+    doc.text(
+      "Ich ermächtige den Förderverein Pro MMBbS e.V., Zahlungen von meinem Konto mittels SEPA-Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die von Pro MMBbS auf mein Konto gezogenen SEPA-Lastschriften einzulösen.",
+      block1X,
+      doc.y,
+      { width: block1W }
+    );
     doc.moveDown();
     doc.text('Hinweis: Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrags verlangen. Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.', block1X, doc.y, {width: block1W});
 
