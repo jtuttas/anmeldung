@@ -294,14 +294,14 @@ function Anmeldeformular() {
         {/* Mitgliedsbeitrag */}
         <fieldset>
           <legend>Mitgliedsbeitrag</legend>
-          <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.5rem',maxWidth:'350px'}}>
+          <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.5rem',width:'100%'}}>
             <label style={{width:'100%'}}>Regulärer Beitrag:<br />
               <input type="text" name="beitrag" value={form.beitrag + ' €'} disabled style={{background:'#f5f5f5',color:'#888',width:'100%'}} />
             </label>
-            <label style={{width:'100%',marginTop:'0.5rem'}}>
+            <div style={{width:'100%',marginTop:'0.5rem',display:'flex',alignItems:'center'}}>
               <input type="checkbox" name="freiwilligAktiv" checked={freiwilligAktiv} onChange={handleChange} style={{marginRight:'0.5em'}} />
-              Ich möchte freiwillig einen höheren Beitrag zahlen
-            </label>
+              <span>Ich möchte freiwillig einen höheren Beitrag zahlen</span>
+            </div>
             <label style={{width:'100%',marginTop:'0.5rem'}}>Freiwilliger Beitrag (EUR):<br />
               <input type="number" name="beitragFrei" min={parseFloat(form.beitrag)+1||1} step="1" placeholder="Betrag in EUR" value={form.beitragFrei} onChange={handleChange} onBlur={handleBeitragFreiBlur} disabled={!freiwilligAktiv} style={{background:freiwilligAktiv?'#fff':'#f5f5f5',color:freiwilligAktiv?'#000':'#888',width:'100%'}} />
               {error && freiwilligAktiv && form.beitragFrei !== '' && (
@@ -350,7 +350,7 @@ function Anmeldeformular() {
         </fieldset>
         {/* Datenschutz und Optionen */}
         <fieldset>
-          <legend>Datenschutz & Optionen</legend>
+          <legend>Datenschutz</legend>
           <div className="datenschutz-group">
              <label>
                <input type="checkbox" name="datenschutz" checked={form.datenschutz} onChange={handleChange} />
