@@ -64,7 +64,7 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
     let mandatsRef = `${mandatsDatum}${ibanSum}`;
   doc.font('Helvetica-Bold').fontSize(10).text('Zahlungsempfänger (Gläubiger):', block1X + 10, block1Y + 10);
   doc.font('Helvetica').fontSize(10).text('Förderverein der Multi Media Berufsbildenden Schulen der Region Hannover e.V.', block1X + 10, block1Y + 28);
-  doc.text('Pro MMBBS', block1X + 10, block1Y + 43);
+  doc.text('Pro MMBbS', block1X + 10, block1Y + 43);
   doc.text('Expo Plaza 3', block1X + 10, block1Y + 58);
   doc.text('30539 Hannover', block1X + 10, block1Y + 73);
   doc.text('Gläubiger-Identifikationsnummer: DE33ZZZ00002835849', block1X + block1W/2 - 50, block1Y + 58);
