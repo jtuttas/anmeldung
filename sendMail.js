@@ -48,91 +48,60 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
       }
     } catch (e) {}
 
-    // Text auf Höhe des Logos, linksbündig, Schriftgröße 10
+    // SEPA-Lastschriftformular
+    doc.fontSize(14).text('SEPA-Lastschriftmandat', 50, 50);
+
+    // Block: Zahlungsempfänger (Gläubiger)
     doc.fontSize(10);
-    doc.text(
-      'Pro MMBbS -Förderverein der Multi Media Berufsbildenden \nSchulen der Region Hannover e.V.\nPro MMBBS, Expo Plaza 3, 30539 Hannover, pro@mmbbs.de',
-      80,
-      logoY,
-      {
-        width: doc.page.width - 200,
-        align: 'left'
-      }
-    );
+    const block1X = 50, block1Y = 80, block1W = doc.page.width - 100, block1H = 90;
+    doc.rect(block1X, block1Y, block1W, block1H).stroke();
+    let mandatsDatum = formData.datum ? formData.datum.replace(/-/g, '') : '';
+    // Quersumme IBAN
+    let ibanSum = 0;
+    if (formData.iban) {
+      for (const c of formData.iban.replace(/\D/g, '')) ibanSum += parseInt(c);
+    }
+    let mandatsRef = `${mandatsDatum}${ibanSum}`;
+  doc.font('Helvetica-Bold').fontSize(10).text('Zahlungsempfänger (Gläubiger):', block1X + 10, block1Y + 10);
+  doc.font('Helvetica').fontSize(10).text('Förderverein der Multi Media Berufsbildenden Schulen der Region Hannover e.V.', block1X + 10, block1Y + 28);
+  doc.text('Pro MMBBS', block1X + 10, block1Y + 43);
+  doc.text('Expo Plaza 3', block1X + 10, block1Y + 58);
+  doc.text('30539 Hannover', block1X + 10, block1Y + 73);
+  doc.text('Gläubiger-Identifikationsnummer: DE33ZZZ00002835849', block1X + block1W/2 - 50, block1Y + 58);
+  doc.text(`Mandatsreferenz: ${mandatsRef}`, block1X + block1W/2 - 50, block1Y + 73);
 
-  // Absenderzeile oberhalb des Adressfelds (Schriftgröße 8)
-  doc.fontSize(8);
-  doc.text(`${formData.name || ''}, ${formData.strasse || ''}, ${formData.plzort || ''}`, 80, 135, {
-    width: 200,
-    align: 'left'
-  });
+    // Block: Zahlungspflichtiger (Kontoinhaber)
+    const block2Y = block1Y + block1H + 20, block2H = 100;
+  doc.rect(block1X, block2Y, block1W, block2H).stroke();
+  doc.font('Helvetica-Bold').fontSize(10).text('Zahlungspflichtiger (Kontoinhaber):', block1X + 10, block2Y + 10);
+  doc.font('Helvetica').fontSize(10).text(`${formData.kontoinhaber || formData.name || ''}`, block1X + 10, block2Y + 28);
+  doc.text(`${formData.strasse || ''}`, block1X + 10, block2Y + 43);
+  doc.text(`${formData.plzort || ''}`, block1X + 10, block2Y + 58);
+  doc.text(`IBAN: ${formData.iban || ''}`, block1X + 10, block2Y + 73);
+  doc.text(`BIC: ${formData.bic || ''}`, block1X + 10, block2Y + 88);
 
-  // Empfängeradresse DIN-konform (Fensterumschlag)
-  doc.fontSize(12);
-  doc.text('Pro MMBBS e.V.\nExpo Plaza 3\n30539 Hannover', 80, 160, {
-    width: 200,
-    align: 'left'
-  });
-
-    // Abstand zum Brieftext
-    doc.moveDown(5);
-    
-
-    // Titel und Einleitung
+    // SEPA-Text
+    let sepaY = block2Y + block2H + 20;
     doc
-      .fontSize(16)
+      .fontSize(10)
       .text(
-        "Mitgliedsanmeldung Förderverein Pro MMBbS - Förderverein der Multi Media Berufsbildenden Schulen Hannover e. V."
+        "Ich ermächtige den Förderverein Pro MMBbS e.V., Zahlungen von meinem Konto mittels SEPA-Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die von Pro MMBbS auf mein Konto gezogenen SEPA-Lastschriften einzulösen.",
+        block1X,
+        sepaY,
+        { width: block1W }
       );
-    doc.moveDown();
     
-    doc.fontSize(12);
-    doc.text('Hiermit melde ich mich verbindlich als Mitglied im Förderverein „Pro MMBbS“ e. V. an.');
     doc.moveDown();
+    doc.text('Hinweis: Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrags verlangen. Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.', block1X, doc.y, {width: block1W});
 
-    // Persönliche Angaben
-    doc.text('Persönliche Angaben:', { underline: true });
-    doc.text(`Mitgliedstyp: ${formData.mitgliedstyp || ''}`);
-    doc.text(`Name: ${formData.name || ''}`);
-    if (formData.ansprechpartner) {
-      doc.text(`Ansprechpartner: ${formData.ansprechpartner}`);
-    }
-    doc.text(`Straße: ${formData.strasse || ''}`);
-    doc.text(`PLZ, Ort: ${formData.plzort || ''}`);
-    doc.text(`Telefon: ${formData.telefon || ''}`);
-    doc.text(`E-Mail: ${formData.email || ''}`);
-    doc.text(`Geburtsdatum: ${formData.geburtsdatum || ''}`);
-    doc.moveDown();
-
-    // Mitgliedsbeitrag
-    doc.text('Mitgliedsbeitrag:', { underline: true });
-    // Prüfe, ob ein freiwilliger Beitrag gesetzt ist und gültig ist
-    const beitragFreiNum = Number(formData.beitragFrei);
-    if (beitragFreiNum && beitragFreiNum > Number(formData.beitrag)) {
-      doc.text(`Beitrag: ${beitragFreiNum} EUR (freiwillig)`);
-    } else {
-      doc.text(`Beitrag: ${formData.beitrag || ''} EUR`);
-    }
-    doc.moveDown();
-
-    // SEPA-Lastschriftmandat
-    doc.text('SEPA-Lastschriftmandat:', { underline: true });
-    doc.text('Gläubiger-Identifikationsnummer: DE33ZZZ00002835849');
-    doc.text(`Kontoinhaber: ${formData.kontoinhaber || ''}`);
-    doc.text(`IBAN: ${formData.iban || ''}`);
-    doc.text(`BIC: ${formData.bic || ''}`);
-    doc.text(`Kreditinstitut: ${formData.kreditinstitut || ''}`);
-    doc.moveDown();
-    doc.text(`${formData.ort || ""} den ${formData.datum || ""}`);
-    doc.moveDown();
-    doc.moveDown();
-    doc.moveDown();
-
-
-    // Unterschriftsbereich für SEPA
-    doc.text('______________________________', 80, doc.y);
-    doc.text('Unterschrift für SEPA-Lastschriftmandat', 80, doc.y);
-    doc.moveDown(2);
+    // Ort, Datum und Unterschrift
+  let unterschriftY = doc.y + 40;
+  doc.fontSize(10).text(`${formData.ort || ''} den ${formData.datum || ''}`, block1X, unterschriftY);
+  // Linie für Unterschrift
+  const strichX = block1X + block1W/2 + 60;
+  const strichY = unterschriftY + 15;
+  doc.text('Unterschrift:', block1X + block1W/2, unterschriftY);
+  doc.moveTo(strichX, strichY).lineTo(strichX + 170, strichY).stroke();
 
     // Fußzeile (zweizeilig, weiter oben)
     doc.fontSize(8);
