@@ -40,7 +40,7 @@ async function ensureExcelFile(accessToken) {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([
       [
-        'Mitgliedstyp', 'Name', 'Ansprechpartner', 'Straße', 'PLZ, Ort', 'Telefon', 'E-Mail', 'Geburtsdatum', 'Beitrag', 'Freiwilliger Beitrag', 'Kontoinhaber', 'IBAN', 'BIC', 'Kreditinstitut', 'Ort', 'Datum', 'Datenschutz', 'Kopie an E-Mail', 'Unterschrift (PNG-Base64)'
+        'Mitgliedstyp', 'Name', 'Ansprechpartner', 'Straße', 'PLZ, Ort', 'Telefon', 'E-Mail', 'Geburtsdatum', 'Beitrag', 'Freiwilliger Beitrag', 'Kontoinhaber', 'IBAN', 'BIC', 'Kreditinstitut', 'Ort', 'Datum', 'Datenschutz'
       ]
     ]);
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
@@ -85,7 +85,7 @@ async function appendToExcel(formData, signatureDataUrl) {
   let tables = await res.json();
   let tableId;
   const expectedColumns = [
-    'Mitgliedstyp', 'Name', 'Ansprechpartner', 'Straße', 'PLZ, Ort', 'Telefon', 'E-Mail', 'Geburtsdatum', 'Beitrag', 'Freiwilliger Beitrag', 'Kontoinhaber', 'IBAN', 'BIC', 'Kreditinstitut', 'Ort', 'Datum', 'Datenschutz', 'Kopie an E-Mail', 'Unterschrift (PNG-Base64)'
+    'Mitgliedstyp', 'Name', 'Ansprechpartner', 'Straße', 'PLZ, Ort', 'Telefon', 'E-Mail', 'Geburtsdatum', 'Beitrag', 'Freiwilliger Beitrag', 'Kontoinhaber', 'IBAN', 'BIC', 'Kreditinstitut', 'Ort', 'Datum', 'Datenschutz'
   ];
   if (tables.value && tables.value.length > 0) {
     tableId = tables.value[0].id;
@@ -156,9 +156,7 @@ async function appendToExcel(formData, signatureDataUrl) {
       formData.kreditinstitut || '',
       formData.ort || '',
       formData.datum || '',
-      formData.datenschutz ? 'Ja' : 'Nein',
-      formData.emailCopy ? 'Ja' : 'Nein',
-      signatureDataUrl ? signatureDataUrl.split(',')[1] : ''
+      formData.datenschutz ? 'Ja' : 'Nein'
     ]],
   };
   console.log('Füge Zeile in Excel ein:', JSON.stringify(addRowBody));
