@@ -50,10 +50,10 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
 
     // Briefkopf: Absender (klein) und Adressat (groß)
     // Absender (Schriftgröße 10)
-    doc.fontSize(10).text(
+    doc.fontSize(8).text(
       `${formData.name || ''}, ${formData.strasse || ''}, ${formData.plzort || ''}`,
       50,
-      logoY + 110,
+      logoY + 100,
       { width: 300 }
     );
     // Adressat (Schriftgröße 12)
