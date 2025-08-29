@@ -238,8 +238,15 @@ function Anmeldeformular() {
 
   return (
     <>
-      <form className="anmeldeformular" autoComplete="off" onSubmit={handleSubmit} style={{ display: submitted ? 'none' : 'block' }}>
-        <div style={{marginBottom:'1rem', color:'#b71c1c', fontWeight:'bold'}}>
+      <form
+        className="anmeldeformular"
+        autoComplete="off"
+        onSubmit={handleSubmit}
+        style={{ display: submitted ? "none" : "block" }}
+      >
+        <div
+          style={{ marginBottom: "1rem", color: "#b71c1c", fontWeight: "bold" }}
+        >
           <span>* Pflichtfeld</span>
         </div>
         <h1>Mitgliedsanmeldung Förderverein „Pro MMBbS“ e. V.</h1>
@@ -248,64 +255,202 @@ function Anmeldeformular() {
           <legend>Persönliche Angaben</legend>
           <div className="radio-group">
             <label>Mitgliedstyp:</label>
-            <label><input type="radio" name="mitgliedstyp" value="Schüler/in" checked={form.mitgliedstyp === 'Schüler/in'} onChange={handleChange} /> Schülerin/Schüler</label>
-            <label><input type="radio" name="mitgliedstyp" value="Lehrkraft" checked={form.mitgliedstyp === 'Lehrkraft'} onChange={handleChange} /> Lehrkraft der MMBbS</label>
-            <label><input type="radio" name="mitgliedstyp" value="Unternehmen" checked={form.mitgliedstyp === 'Unternehmen'} onChange={handleChange} /> Unternehmen/Institution</label>
-            <label><input type="radio" name="mitgliedstyp" value="Sonstiges" checked={form.mitgliedstyp === 'Sonstiges'} onChange={handleChange} /> Sonstiges Mitglied</label>
-          </div>
-          <div>
-            <label>Vor- und Nachname / Unternehmen<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="name" value={form.name} onChange={handleChange} onBlur={handleBlur} />
+            <label>
+              <input
+                type="radio"
+                name="mitgliedstyp"
+                value="Schüler/in"
+                checked={form.mitgliedstyp === "Schüler/in"}
+                onChange={handleChange}
+              />{" "}
+              Schülerin/Schüler
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="mitgliedstyp"
+                value="Lehrkraft"
+                checked={form.mitgliedstyp === "Lehrkraft"}
+                onChange={handleChange}
+              />{" "}
+              Lehrkraft der MMBbS
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="mitgliedstyp"
+                value="Unternehmen"
+                checked={form.mitgliedstyp === "Unternehmen"}
+                onChange={handleChange}
+              />{" "}
+              Unternehmen/Institution
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="mitgliedstyp"
+                value="Sonstiges"
+                checked={form.mitgliedstyp === "Sonstiges"}
+                onChange={handleChange}
+              />{" "}
+              Sonstiges Mitglied
             </label>
           </div>
-          {form.mitgliedstyp === 'Unternehmen' && (
+          <div>
+            <label>
+              Vor- und Nachname / Unternehmen
+              <span style={{ color: "#b71c1c" }}>*</span>
+              <br />
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </label>
+          </div>
+          {form.mitgliedstyp === "Unternehmen" && (
             <div>
-              <label>Ansprechpartner<br />
-                <input type="text" name="ansprechpartner" value={form.ansprechpartner} onChange={handleChange} />
+              <label>
+                Ansprechpartner
+                <br />
+                <input
+                  type="text"
+                  name="ansprechpartner"
+                  value={form.ansprechpartner}
+                  onChange={handleChange}
+                />
               </label>
             </div>
           )}
           <div>
-            <label>Straße, Hausnummer<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="strasse" value={form.strasse} onChange={handleChange} />
+            <label>
+              Straße, Hausnummer<span style={{ color: "#b71c1c" }}>*</span>
+              <br />
+              <input
+                type="text"
+                name="strasse"
+                value={form.strasse}
+                onChange={handleChange}
+              />
             </label>
           </div>
           <div>
-            <label>PLZ, Ort<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="plzort" value={form.plzort} onChange={handleChange} />
+            <label>
+              PLZ, Ort<span style={{ color: "#b71c1c" }}>*</span>
+              <br />
+              <input
+                type="text"
+                name="plzort"
+                value={form.plzort}
+                onChange={handleChange}
+              />
             </label>
           </div>
           <div>
-            <label>Telefon (optional)<br />
-              <input type="text" name="telefon" value={form.telefon} onChange={handleChange} />
+            <label>
+              Telefon (optional)
+              <br />
+              <input
+                type="text"
+                name="telefon"
+                value={form.telefon}
+                onChange={handleChange}
+              />
             </label>
           </div>
           <div>
-            <label>E-Mail<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="email" name="email" value={form.email} onChange={handleChange} />
+            <label>
+              E-Mail<span style={{ color: "#b71c1c" }}>*</span>
+              <br />
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+              />
             </label>
           </div>
           <div>
-            <label>Geburtsdatum (nur bei Schüler:innen)<br />
-              <input type="date" name="geburtsdatum" value={form.geburtsdatum} onChange={handleChange} />
+            <label>
+              Geburtsdatum (nur bei Schüler:innen)
+              <br />
+              <input
+                type="date"
+                name="geburtsdatum"
+                value={form.geburtsdatum}
+                onChange={handleChange}
+              />
             </label>
           </div>
         </fieldset>
         {/* Mitgliedsbeitrag */}
         <fieldset>
           <legend>Mitgliedsbeitrag</legend>
-          <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:'0.5rem',width:'100%'}}>
-            <label style={{width:'100%'}}>Regulärer Beitrag:<br />
-              <input type="text" name="beitrag" value={form.beitrag + ' €'} disabled style={{background:'#f5f5f5',color:'#888',width:'100%'}} />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.5rem",
+              width: "100%",
+            }}
+          >
+            <label style={{ width: "100%" }}>
+              Regulärer Beitrag:
+              <br />
+              <input
+                type="text"
+                name="beitrag"
+                value={form.beitrag + " €"}
+                disabled
+                style={{ background: "#f5f5f5", color: "#888", width: "100%" }}
+              />
             </label>
-            <div style={{width:'100%',marginTop:'0.5rem',display:'flex',alignItems:'center'}}>
-              <input type="checkbox" name="freiwilligAktiv" checked={freiwilligAktiv} onChange={handleChange} style={{marginRight:'0.5em'}} />
+            <div
+              style={{
+                width: "100%",
+                marginTop: "0.5rem",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <input
+                type="checkbox"
+                name="freiwilligAktiv"
+                checked={freiwilligAktiv}
+                onChange={handleChange}
+                style={{ marginRight: "0.5em" }}
+              />
               <span>Ich möchte freiwillig einen höheren Beitrag zahlen</span>
             </div>
-            <label style={{width:'100%',marginTop:'0.5rem'}}>Freiwilliger Beitrag (EUR):<br />
-              <input type="number" name="beitragFrei" min={parseFloat(form.beitrag)+1||1} step="1" placeholder="Betrag in EUR" value={form.beitragFrei} onChange={handleChange} onBlur={handleBeitragFreiBlur} disabled={!freiwilligAktiv} style={{background:freiwilligAktiv?'#fff':'#f5f5f5',color:freiwilligAktiv?'#000':'#888',width:'100%'}} />
-              {error && freiwilligAktiv && form.beitragFrei !== '' && (
-                <div className="error" style={{color:'red',marginTop:'0.3em'}}>{error}</div>
+            <label style={{ width: "100%", marginTop: "0.5rem" }}>
+              Freiwilliger Beitrag (EUR):
+              <br />
+              <input
+                type="number"
+                name="beitragFrei"
+                min={parseFloat(form.beitrag) + 1 || 1}
+                step="1"
+                placeholder="Betrag in EUR"
+                value={form.beitragFrei}
+                onChange={handleChange}
+                onBlur={handleBeitragFreiBlur}
+                disabled={!freiwilligAktiv}
+                style={{
+                  background: freiwilligAktiv ? "#fff" : "#f5f5f5",
+                  color: freiwilligAktiv ? "#000" : "#888",
+                  width: "100%",
+                }}
+              />
+              {error && freiwilligAktiv && form.beitragFrei !== "" && (
+                <div
+                  className="error"
+                  style={{ color: "red", marginTop: "0.3em" }}
+                >
+                  {error}
+                </div>
               )}
             </label>
           </div>
@@ -313,37 +458,127 @@ function Anmeldeformular() {
         {/* SEPA-Lastschriftmandat */}
         <fieldset>
           <legend>SEPA-Lastschriftmandat</legend>
-          <div className="sepa-mandat-hinweis" style={{marginBottom: '1rem', fontSize: '1.05rem', background: '#f6f7fa', padding: '0.7rem 1rem', borderRadius: '6px', border: '1px solid #e0e0e0'}}>
-            Ich ermächtige den Förderverein „Pro MMBbS“ e. V., Zahlungen jährlich mittels SEPA-Lastschrift von meinem Konto einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Förderverein auf mein Konto gezogenen Lastschriften einzulösen.<br/>
-            <b>Hinweis:</b> Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrags verlangen. Es gelten die mit meinem Kreditinstitut vereinbarten Bedingungen.
+          <div
+            className="sepa-mandat-hinweis"
+            style={{
+              marginBottom: "1rem",
+              fontSize: "1.05rem",
+              background: "#f6f7fa",
+              padding: "0.7rem 1rem",
+              borderRadius: "6px",
+              border: "1px solid #e0e0e0",
+            }}
+          >
+            Ich ermächtige den Förderverein Förderverein der Multi Media
+            Berufsbildenden Schulen der Region Hannover e.V., Zahlungen jährlich
+            mittels SEPA-Lastschrift von meinem Konto einzuziehen. Zugleich
+            weise ich mein Kreditinstitut an, die vom Förderverein auf mein
+            Konto gezogenen Lastschriften einzulösen.
+            <br />
+            <b>Hinweis:</b> Ich kann innerhalb von acht Wochen, beginnend mit
+            dem Belastungsdatum, die Erstattung des belasteten Betrags
+            verlangen. Es gelten die mit meinem Kreditinstitut vereinbarten
+            Bedingungen.
           </div>
           <div>
-            <label>Kontoinhaber (falls abweichend)<br />
-              <input type="text" name="kontoinhaber" value={form.kontoinhaber} onChange={handleChange} />
+            <label>
+              Kontoinhaber (falls abweichend)
+              <br />
+              <input
+                type="text"
+                name="kontoinhaber"
+                value={form.kontoinhaber}
+                onChange={handleChange}
+              />
             </label>
           </div>
           <div>
-            <label>IBAN<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="iban" value={form.iban} onChange={handleChange} onBlur={handleBlur} />
+            <label>
+              IBAN<span style={{ color: "#b71c1c" }}>*</span>
+              <br />
+              <input
+                type="text"
+                name="iban"
+                value={form.iban}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
             </label>
-            {ibanError && <div className="error" style={{color:'red',marginTop:'-1rem',marginBottom:'1rem'}}>{ibanError}</div>}
+            {ibanError && (
+              <div
+                className="error"
+                style={{
+                  color: "red",
+                  marginTop: "-1rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                {ibanError}
+              </div>
+            )}
           </div>
           <div>
-            <label>BIC<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="bic" value={form.bic} onChange={handleChange} onBlur={handleBlur} />
+            <label>
+              BIC<span style={{ color: "#b71c1c" }}>*</span>
+              <br />
+              <input
+                type="text"
+                name="bic"
+                value={form.bic}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
             </label>
-            {bicError && <div className="error" style={{color:'red',marginTop:'-1rem',marginBottom:'1rem'}}>{bicError}</div>}
+            {bicError && (
+              <div
+                className="error"
+                style={{
+                  color: "red",
+                  marginTop: "-1rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                {bicError}
+              </div>
+            )}
           </div>
           <div>
-            <label>Kreditinstitut<span style={{color:'#b71c1c'}}>*</span><br />
-              <input type="text" name="kreditinstitut" value={form.kreditinstitut} onChange={handleChange} />
+            <label>
+              Kreditinstitut<span style={{ color: "#b71c1c" }}>*</span>
+              <br />
+              <input
+                type="text"
+                name="kreditinstitut"
+                value={form.kreditinstitut}
+                onChange={handleChange}
+              />
             </label>
           </div>
           <div className="ort-datum-row">
-            <label>Ort, Datum<br /></label>
+            <label>
+              Ort, Datum
+              <br />
+            </label>
             <div className="ort-datum-fields">
-              <input type="text" name="ort" value={form.ort} onChange={handleChange} placeholder="Ort" />
-              <input type="date" name="datum" value={form.datum} readOnly tabIndex={-1} style={{ background: '#f5f5f5', color: '#888', cursor: 'not-allowed' }} />
+              <input
+                type="text"
+                name="ort"
+                value={form.ort}
+                onChange={handleChange}
+                placeholder="Ort"
+              />
+              <input
+                type="date"
+                name="datum"
+                value={form.datum}
+                readOnly
+                tabIndex={-1}
+                style={{
+                  background: "#f5f5f5",
+                  color: "#888",
+                  cursor: "not-allowed",
+                }}
+              />
             </div>
           </div>
           {/* Unterschriftenfeld entfernt */}
@@ -352,24 +587,47 @@ function Anmeldeformular() {
         <fieldset>
           <legend>Datenschutz</legend>
           <div className="datenschutz-group">
-             <label>
-               <input type="checkbox" name="datenschutz" checked={form.datenschutz} onChange={handleChange} />
-               Ich habe die <a href="/Datenverarbeitung.html" target="_blank" rel="noopener noreferrer">Hinweise zur Datenverarbeitung</a> gelesen und akzeptiere sie.<span style={{color:'#b71c1c'}}>*</span>
-             </label>
+            <label>
+              <input
+                type="checkbox"
+                name="datenschutz"
+                checked={form.datenschutz}
+                onChange={handleChange}
+              />
+              Ich habe die{" "}
+              <a
+                href="/Datenverarbeitung.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Hinweise zur Datenverarbeitung
+              </a>{" "}
+              gelesen und akzeptiere sie.
+              <span style={{ color: "#b71c1c" }}>*</span>
+            </label>
           </div>
         </fieldset>
-        <button type="submit" disabled={loading}>Absenden</button>
-        {error && <div className="error" style={{color: 'red', marginTop: '1rem'}}>{error}</div>}
+        <button type="submit" disabled={loading}>
+          Absenden
+        </button>
+        {error && (
+          <div className="error" style={{ color: "red", marginTop: "1rem" }}>
+            {error}
+          </div>
+        )}
         {missingFields.length > 0 && (
-          <div className="error" style={{color: 'red', marginTop: '1rem'}}>
-            Bitte füllen Sie folgende Pflichtfelder aus: {missingFields.join(', ')}
+          <div className="error" style={{ color: "red", marginTop: "1rem" }}>
+            Bitte füllen Sie folgende Pflichtfelder aus:{" "}
+            {missingFields.join(", ")}
           </div>
         )}
       </form>
       <Modal show={loading}>
-        <div style={{textAlign:'center', padding:'2rem'}}>
-          <div className="spinner" style={{marginBottom:'1.5rem'}}></div>
-          <div style={{fontWeight:'bold', color:'#1a237e'}}>Bitte warten, Ihre Anmeldung wird verarbeitet ...</div>
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          <div className="spinner" style={{ marginBottom: "1.5rem" }}></div>
+          <div style={{ fontWeight: "bold", color: "#1a237e" }}>
+            Bitte warten, Ihre Anmeldung wird verarbeitet ...
+          </div>
         </div>
       </Modal>
     </>
