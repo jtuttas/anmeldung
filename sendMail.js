@@ -4,6 +4,7 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 const { Buffer } = require('buffer');
 const { appendToExcel } = require('./onedriveExcel');
+const { PDFDocument: PDFLibDocument, rgb } = require('pdf-lib');
 
 const configDir = process.env.CONFIG_DIR || path.join(__dirname, 'config');
 // Lade Secrets
@@ -130,6 +131,26 @@ function createAnmeldungPDF(formData, signatureDataUrl) {
   });
 }
 
+async function addAddressToPdf(formData) {
+  const pdfPath = path.join(__dirname, 'public', 'Spendenbescheinigung_2025.pdf');
+  const existingPdfBytes = fs.readFileSync(pdfPath);
+  const pdfDoc = await PDFLibDocument.load(existingPdfBytes);
+  const pages = pdfDoc.getPages();
+  const firstPage = pages[0];
+
+  const address = `${formData.name}\n${formData.strasse}\n${formData.plzort}`;
+
+  firstPage.drawText(address, {
+    x: 70,
+    y: 650, // This might need adjustment
+    size: 12,
+    color: rgb(0, 0, 0),
+  });
+
+  const pdfBytes = await pdfDoc.save();
+  return pdfBytes;
+}
+
 function sendAnmeldungMail(formData, signatureDataUrl, callback) {
   console.log('Sende E-Mail an:', formData.email);
   console.log('Formulardaten:', formData);
@@ -145,8 +166,8 @@ function sendAnmeldungMail(formData, signatureDataUrl, callback) {
   if (formData.email) {
     empfaenger.push(formData.email);
   }
-  createAnmeldungPDF(formData, signatureDataUrl).then((pdfBuffer) => {
-    const spendenbescheinigungPath = path.join(__dirname, 'public', 'Spendenbescheinigung_2025.pdf');
+  createAnmeldungPDF(formData, signatureDataUrl).then(async (pdfBuffer) => {
+    const spendenbescheinigungWithAddress = await addAddressToPdf(formData);
     const mailOptions = {
       from: secrets.from,
       to: empfaenger,
@@ -160,7 +181,7 @@ function sendAnmeldungMail(formData, signatureDataUrl, callback) {
         },
         {
           filename: 'Spendenbescheinigung_2025.pdf',
-          content: fs.readFileSync(spendenbescheinigungPath),
+          content: spendenbescheinigungWithAddress,
           contentType: 'application/pdf'
         }
       ]
