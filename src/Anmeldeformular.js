@@ -621,6 +621,9 @@ function Anmeldeformular() {
             {missingFields.join(", ")}
           </div>
         )}
+		<div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
+          <a href="/Impressum.html" target="_blank" rel="noopener noreferrer">Impressum</a>
+        </div>
       </form>
       <Modal show={loading}>
         <div style={{ textAlign: "center", padding: "2rem" }}>
