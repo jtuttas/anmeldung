@@ -556,7 +556,7 @@ function Anmeldeformular() {
           </div>
           <div className="ort-datum-row">
             <label>
-              Ort, Datum
+              Ort<span style={{ color: "#b71c1c" }}>*</span>, Datum
               <br />
             </label>
             <div className="ort-datum-fields">
@@ -621,8 +621,12 @@ function Anmeldeformular() {
             {missingFields.join(", ")}
           </div>
         )}
-		<div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
-          <a href="/Impressum.html" target="_blank" rel="noopener noreferrer">Impressum</a>
+        <div
+          style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.9rem" }}
+        >
+          <a href="/Impressum.html" target="_blank" rel="noopener noreferrer">
+            Impressum
+          </a>
         </div>
       </form>
       <Modal show={loading}>

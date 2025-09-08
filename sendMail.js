@@ -178,11 +178,6 @@ function sendAnmeldungMail(formData, signatureDataUrl, callback) {
           filename: 'Anmeldung.pdf',
           content: pdfBuffer,
           contentType: 'application/pdf'
-        },
-        {
-          filename: 'Spendenbescheinigung_2025.pdf',
-          content: spendenbescheinigungWithAddress,
-          contentType: 'application/pdf'
         }
       ]
     };
